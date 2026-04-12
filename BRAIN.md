@@ -44,8 +44,12 @@ Exercise routines, nutrition, and wellness.
 ![[Health/README.md]]
 
 ---
+## 🍳 [[app/index.html|Mickey's Kitchen (Web Homepage)]]
+Digital Brain Recipe Style Gobi SDK Homepage.
+
+---
 ## 🤖 Automation Status
 - **StockBot Sync**: Scheduled (24h)
 - **GitHub PKM Sync**: Active
 
-_Last updated: 2026-04-01_
+_Last updated: 2026-04-12_
