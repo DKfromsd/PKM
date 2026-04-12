@@ -27,6 +27,10 @@ Automated financial analysis reports.
 Jazz theory, classical repertoire, and soundtrack analysis.
 ![[Music/README.md]]
 
+### 📚 [[Study/README.md|Study Dashboard]]
+Architecture, Infrastructure as Code, and AI research.
+![[Study/README.md]]
+
 ### 📝 [[Thoughts/README.md|Thoughts Dashboard]]
 Personal reflections, notes, and intellectual deep dives.
 ![[Thoughts/README.md]]

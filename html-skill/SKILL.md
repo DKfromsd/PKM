@@ -1,12 +1,13 @@
-# The Daily Brain - Gobi Homepage Skill
+# Mickey's Kitchen - Gobi Homepage Skill
 
 이 폴더는 `gobispace.com/@mickeyfromsd`를 위한 맞춤형 디자인 소스 코드를 담고 있습니다.
 
 ## 📰 주요 기능
-- **Newspaper Style**: 'The Daily Brain'이라는 제목의 정통 신문 레이아웃.
-- **Bright Theme**: 밝고 깨끗한 배경과 가독성 높은 세리프 폰트.
-- **Dynamic Content**: Gobi SDK를 통해 실시간으로 브레인 업데이트 내역과 메타데이터를 가져옴.
-- **AI Chatbot**: 하단 사이드바를 통해 자신의 브레인과 직접 대화 가능.
+- **Kitchen/Recipe Style**: 'Mickey's Kitchen'이라는 제목의 따뜻하고 감성적인 레시피 북 레이아웃.
+- **Warm Theme**: 부드러운 크림색 배경(#fffaf0)과 우드톤 포인트로 편안한 분위기 조성.
+- **Cuisine Navigation**: 지식의 카테고리를 요리 테마(Cuisine)로 분류하여 직관적인 탐색 지원.
+- **Dynamic Content**: Gobi SDK를 통해 실시간으로 브레인 업데이트 내역과 메타데이터를 가져와 요리 카드로 렌더링.
+- **AI Chatbot**: 하단 플로팅 버튼을 통해 자신의 브레인과 직접 대화 가능.
 
 ## 🛠 구성 파일
 - `index.html`: 메인 웹페이지 소스 (CSS, JS, HTML 통합)
@@ -14,8 +15,9 @@
 
 ## 🚀 적용 방법
 1. 이 폴더의 `index.html` 파일을 루트의 `app/index.html`로 복사합니다.
-2. `git add .`, `git commit -m "Update homepage to Daily Brain style"`, `git push`를 실행합니다.
-3. 약 1분 후 `gobispace.com/@mickeyfromsd`에서 변경 사항을 확인합니다.
+2. `git add .`, `git commit -m "Update homepage to Mickey's Kitchen style"`, `git push`를 실행합니다.
+3. `gobi sync`를 실행하여 클라우드에 즉시 반영합니다.
+4. 약 1분 후 `gobispace.com/@mickeyfromsd`에서 변경 사항을 확인합니다.
 
 ## 📝 SDK 연동 참고
 - `gobi.vault.getMetadata()`: 볼트 정보 로드
