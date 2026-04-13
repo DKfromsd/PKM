@@ -1,0 +1,14 @@
+# Ignore references and private notes from Gobi sync
+references/
+study_notes/
+_Gobi/
+_Gobi_/
+.gobi/
+_Settings_/
+.obsidian/
+.obsidian.base
+orchestrator.yaml
+Untitled.base
+.DS_Store
+node_modules/
+dist/
