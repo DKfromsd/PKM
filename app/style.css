@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Lora:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+    --bg-color: #fffaf0; /* Warm Floral White */
+    --text-color: #2c2c2c;
+    --accent-color: #8b4513; /* Saddle Brown */
+    --secondary-color: #556b2f; /* Dark Olive Green */
+    --border-color: #e0d5c1;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Lora', serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.7;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Recipe Header */
+header {
+    text-align: center;
+    border-bottom: 2px solid var(--accent-color);
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+}
+
+.kitchen-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: var(--accent-color);
+    margin: 0;
+    font-style: italic;
+}
+
+.subtitle {
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+
+/* Cuisine Navigation (Folders) */
+.cuisine-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+}
+
+.cuisine-btn {
+    background: none;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 8px 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.cuisine-btn:hover, .cuisine-btn.active {
+    background: var(--accent-color);
+    color: white;
+}
+
+/* README Section */
+#readme-section {
+    margin-bottom: 50px;
+    padding: 30px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: none; /* Hidden by default */
+}
+
+/* Recipe Grid */
+.recipe-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.recipe-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    padding: 25px;
+    transition: transform 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(139, 69, 19, 0.1);
+}
+
+.recipe-card .category {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+
+.recipe-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin: 10px 0;
+    color: var(--text-color);
+}
+
+.recipe-card .snippet {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Full Recipe Viewer */
+#recipe-viewer {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: white;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 60px 20px;
+}
+
+.viewer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.close-btn {
+    position: fixed;
+    top: 20px; right: 30px;
+    font-size: 2rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--accent-color);
+}
+
+/* Chat Sidebar (Chef AI) */
+.chef-ai {
+    margin-top: 60px;
+    border-top: 2px dashed var(--accent-color);
+    padding-top: 40px;
+    text-align: center;
+}
+
+#chat-window {
+    max-width: 600px;
+    margin: 0 auto 20px;
+    height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.input-group {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+}
+
+#chat-input {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid var(--accent-color);
+    font-family: 'Lora', serif;
+}
+
+.send-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+}
