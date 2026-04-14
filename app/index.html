@@ -5,114 +5,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mickey's Kitchen - Digital Brain Recipe</title>
     <script src="https://gobispace.com/gobi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Lora:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
 
         :root {
-            --bg-color: #fffaf0;
+            --bg-color: #fffaf0; /* Floral White */
             --card-bg: #ffffff;
-            --text-color: #2c2c2c;
+            --text-color: #1a1a1a;
             --accent-color: #8b4513; /* Wood brown */
-            --secondary-color: #6b8e23; /* Olive Green */
+            --secondary-color: #b8860b; /* Dark Goldenrod */
             --border-color: #e8dfd0;
+            --soft-shadow: 0 10px 30px rgba(139, 69, 19, 0.05);
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Lora', serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0; padding: 0;
-            line-height: 1.8;
+            line-height: 1.6;
+            scroll-behavior: smooth;
         }
+
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%;
+            background: rgba(255, 250, 240, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            padding: 15px 20px;
+            gap: 20px;
+            overflow-x: auto;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover { color: var(--accent-color); }
 
         .container {
             max-width: 1100px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 120px 20px 60px;
         }
 
         header {
             text-align: center;
-            border-bottom: 3px double var(--accent-color);
-            margin-bottom: 50px;
-            padding-bottom: 30px;
+            margin-bottom: 80px;
         }
 
         .kitchen-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.5rem;
             color: var(--accent-color);
             margin: 0;
             font-style: italic;
+            font-weight: 400;
         }
 
-        .cuisine-nav {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 50px;
-        }
-
-        .cuisine-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
             color: var(--accent-color);
-            padding: 10px 25px;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
-            border-radius: 30px;
-        }
-
-        .cuisine-btn:hover, .cuisine-btn.active {
-            background: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
+            margin: 60px 0 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
         }
 
         .recipe-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 35px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
         }
 
         .recipe-card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
             padding: 30px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 8px;
+            box-shadow: var(--soft-shadow);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             cursor: pointer;
-            border-radius: 4px;
+            border: 1px solid transparent;
             display: flex; flex-direction: column;
         }
 
         .recipe-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(139, 69, 19, 0.08);
-        }
-
-        .recipe-card .badge {
-            font-family: 'Roboto', sans-serif;
-            font-size: 0.7rem;
-            color: var(--secondary-color);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 15px;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(139, 69, 19, 0.1);
+            border-color: var(--border-color);
         }
 
         .recipe-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
             margin: 0 0 15px 0;
-            color: var(--text-color);
+            line-height: 1.2;
         }
 
-        /* Full Viewer Overlay */
+        .recipe-card .snippet {
+            font-size: 0.95rem;
+            color: #666;
+            flex-grow: 1;
+            margin-bottom: 20px;
+        }
+
+        .recipe-card .footer {
+            font-size: 0.75rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Modal Viewer */
         #recipe-viewer {
             display: none;
             position: fixed;
@@ -123,215 +146,206 @@
         }
 
         .viewer-inner {
-            max-width: 850px;
-            margin: 80px auto;
+            max-width: 800px;
+            margin: 60px auto;
             background: white;
             padding: 60px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.05);
+            border-radius: 12px;
         }
 
-        .close-viewer {
+        .close-btn {
             position: fixed;
             top: 30px; right: 40px;
-            font-size: 3rem;
+            font-size: 2.5rem;
             cursor: pointer;
             color: var(--accent-color);
-            border: none; background: none;
+            background: none; border: none;
         }
 
-        .markdown-content img { max-width: 100%; border-radius: 4px; }
-        .markdown-content pre { background: #f8f8f8; padding: 20px; overflow-x: auto; border-radius: 4px; }
+        .markdown-content { font-family: 'Lora', serif; font-size: 1.1rem; }
+        .markdown-content h1, .markdown-content h2 { font-family: 'Cormorant Garamond', serif; color: var(--accent-color); }
+        .markdown-content img { max-width: 100%; border-radius: 8px; }
+        .markdown-content pre { background: #fdf6e3; padding: 20px; border-radius: 8px; overflow-x: auto; }
 
-        /* AI Chef */
-        .chef-footer {
-            margin-top: 100px;
-            padding: 60px 20px;
-            background: white;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        #chat-log {
-            max-width: 700px;
-            margin: 30px auto;
-            text-align: left;
-            border: 1px solid var(--border-color);
-            height: 250px;
+        /* Secret Debug Log */
+        #debug-log {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.9);
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 150px;
             overflow-y: auto;
-            padding: 20px;
-            background: #fafafa;
-        }
-
-        .chat-input-area {
-            max-width: 700px;
-            margin: 0 auto;
-            display: flex;
-            gap: 10px;
-        }
-
-        input#chat-input {
-            flex: 1;
-            padding: 15px;
-            border: 1px solid var(--accent-color);
-            border-radius: 4px;
-            font-family: 'Lora', serif;
-        }
-
-        .chef-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 0 30px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 700;
+            padding: 10px;
+            display: none;
+            z-index: 9999;
         }
     </style>
 </head>
 <body>
 
+<div id="debug-log"></div>
+
+<nav class="navbar">
+    <div class="nav-inner" id="nav-inner">
+        <a href="#" class="nav-link" onclick="window.scrollTo(0,0)">Top</a>
+    </div>
+</nav>
+
 <div class="container">
     <header>
-        <div style="text-transform: uppercase; letter-spacing: 4px; font-size: 0.8rem; margin-bottom: 10px; color: var(--secondary-color); font-weight: 700;">Private Culinary Notes</div>
         <h1 class="kitchen-title">Mickey's Kitchen</h1>
-        <p style="color: #888; font-style: italic;">"Turning raw data into delicious knowledge recipes."</p>
+        <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.75rem; color: var(--secondary-color); font-weight: 800;">Digital Brain Recipe Book v3.2</p>
     </header>
 
-    <nav class="cuisine-nav" id="cuisine-nav">
-        <button class="cuisine-btn active" onclick="filterCuisine('all', this)">All Specials</button>
-    </nav>
-
-    <div class="recipe-grid" id="recipe-grid">
-        <p style="text-align: center; grid-column: 1/-1;">Heating up the stove...</p>
+    <div id="kitchen-main">
+        <p style="text-align: center; font-style: italic;" id="loading-msg">Arranging the Table...</p>
     </div>
 </div>
 
 <div id="recipe-viewer">
-    <button class="close-viewer" onclick="closeRecipe()">&times;</button>
-    <div class="viewer-inner">
-        <div id="viewer-body"></div>
-    </div>
+    <button class="close-btn" onclick="closeRecipe()">&times;</button>
+    <div class="viewer-inner" id="viewer-content"></div>
 </div>
 
-<footer class="chef-footer">
-    <h2 style="font-family: 'Playfair Display'; italic;">Ask the Head Chef</h2>
-    <div id="chat-log"></div>
-    <div class="chat-input-area">
-        <input type="text" id="chat-input" placeholder="What's on the menu today?">
-        <button class="chef-btn" onclick="askChef()">Send</button>
-    </div>
-</footer>
-
 <script>
-    window.onload = async () => {
-        try {
-            const metadata = await gobi.vault.getMetadata();
-            const nav = document.getElementById('cuisine-nav');
-            const folders = (metadata.folders || []).filter(f => !f.startsWith('.') && !f.startsWith('_'));
+    const categories = ['Stock', 'StockBot', 'Music', 'Health', 'Illustration', 'Thoughts', 'Study'];
+    const logs = [];
 
-            folders.forEach(f => {
-                const b = document.createElement('button');
-                b.className = 'cuisine-btn';
-                b.innerText = f;
-                b.onclick = (e) => filterCuisine(f, e.target);
-                nav.appendChild(b);
-            });
-
-            const updates = await gobi.listBrainUpdates();
-            renderRecipes(updates);
-        } catch (err) { console.error(err); }
-    };
-
-    async function filterCuisine(folder, btn) {
-        document.querySelectorAll('.cuisine-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const grid = document.getElementById('recipe-grid');
-        grid.innerHTML = "<p>Searching the pantry...</p>";
-
-        try {
-            const list = folder === 'all'
-                ? await gobi.listBrainUpdates()
-                : await gobi.vault.search(`path:${folder}`);
-            renderRecipes(list);
-        } catch (err) { console.error(err); }
+    function log(msg) {
+        const time = new Date().toLocaleTimeString();
+        logs.push(`[${time}] ${msg}`);
+        const panel = document.getElementById('debug-log');
+        if (panel) {
+            panel.innerHTML = logs.join('<br>');
+            panel.scrollTop = panel.scrollHeight;
+        }
+        console.log(msg);
     }
 
-    function renderRecipes(list) {
-        const grid = document.getElementById('recipe-grid');
-        grid.innerHTML = "";
-
-        if (!list || list.length === 0) {
-            grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>No recipes found here yet.</p>";
-            return;
+    // Toggle debug log with 'L' key
+    window.addEventListener('keydown', e => {
+        if (e.key.toLowerCase() === 'l') {
+            const panel = document.getElementById('debug-log');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         }
+    });
 
-        list.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'recipe-card';
-            card.onclick = () => openRecipe(item.path);
+    window.onload = async () => {
+        log("Kitchen engine starting...");
 
-            const folder = item.path.includes('/') ? item.path.split('/')[0] : 'General';
-            const title = item.title || item.path.split('/').pop().replace('.md', '');
+        let attempts = 0;
+        const checkSDK = setInterval(async () => {
+            attempts++;
+            if (window.gobi) {
+                clearInterval(checkSDK);
+                log("SDK Connected. Vault: " + gobi.vaultId);
+                await startCooking();
+            } else if (attempts > 30) {
+                clearInterval(checkSDK);
+                log("FATAL: SDK Timeout");
+                document.getElementById('loading-msg').innerText = "Chef is away. (SDK Timeout)";
+            }
+        }, 200);
+    };
 
-            card.innerHTML = `
-                <div class="badge">${folder}</div>
-                <h3>${title}</h3>
-                <div style="font-size: 0.9rem; color: #777; flex-grow: 1;">${item.snippet || 'A secret recipe from Mickey\'s vault...'}</div>
-                <div style="font-size: 0.75rem; color: #bbb; margin-top: 20px;">Prepared on ${new Date(item.timestamp || Date.now()).toLocaleDateString()}</div>
-            `;
-            grid.appendChild(card);
-        });
+    async function startCooking() {
+        const main = document.getElementById('kitchen-main');
+        const nav = document.getElementById('nav-inner');
+        main.innerHTML = "";
+
+        for (const cat of categories) {
+            log(`Reading folder: "${cat}"`);
+            let recipes = [];
+
+            // MULTI-PATH PROBE: nav=false 환경에서도 뚫리는 경로를 찾음
+            const pathsToTry = [`../${cat}`, `./${cat}`, `/${cat}`, cat];
+            let successfulPath = null;
+
+            for (const p of pathsToTry) {
+                try {
+                    const res = await gobi.listFiles(p);
+                    const list = Array.isArray(res) ? res : (res.data || res.results || []);
+                    if (list.length > 0) {
+                        recipes = list.filter(f => f.name.endsWith('.md') && f.name !== 'README.md');
+                        successfulPath = p;
+                        log(`  SUCCESS: Found ${recipes.length} recipes in ${p}`);
+                        break;
+                    }
+                } catch (e) { /* continue */ }
+            }
+
+            if (recipes.length > 0) {
+                // Add Nav Link
+                const nl = document.createElement('a');
+                nl.href = `#section-${cat}`;
+                nl.className = 'nav-link';
+                nl.innerText = cat;
+                nav.appendChild(nl);
+
+                // Create Section
+                const sec = document.createElement('section');
+                sec.id = `section-${cat}`;
+                sec.innerHTML = `<h2 class="section-title">${cat}</h2>`;
+
+                const grid = document.createElement('div');
+                grid.className = 'recipe-grid';
+
+                recipes.forEach(r => {
+                    const card = document.createElement('div');
+                    card.className = 'recipe-card';
+                    const fullPath = `${successfulPath}/${r.name}`;
+                    card.onclick = () => openRecipe(fullPath);
+
+                    card.innerHTML = `
+                        <div style="font-size: 0.7rem; color: var(--secondary-color); font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">${cat}</div>
+                        <h3>${r.name.replace('.md', '')}</h3>
+                        <div class="snippet">Discover Mickey's insights on ${cat}...</div>
+                        <div class="footer">
+                            <span>${(r.size / 1024).toFixed(1)} KB</span>
+                            <span>View Recipe →</span>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                sec.appendChild(grid);
+                main.appendChild(sec);
+            } else {
+                log(`  Skip ${cat}: No recipes found.`);
+            }
+        }
+        log("RENDER COMPLETE.");
     }
 
     async function openRecipe(path) {
+        log(`Opening recipe: ${path}`);
         try {
-            const content = await gobi.vault.getFileContent(path);
-            const html = gobi.renderMarkdown(content);
+            const content = await gobi.vault.readFile(path);
+            const html = marked.parse(content);
             const viewer = document.getElementById('recipe-viewer');
-            const body = document.getElementById('viewer-body');
+            const contentArea = document.getElementById('viewer-content');
 
-            body.innerHTML = `
-                <div style="text-align: center; margin-bottom: 50px;">
-                    <h1 style="font-family: 'Playfair Display'; font-size: 3rem; color: var(--accent-color);">${path.split('/').pop().replace('.md', '')}</h1>
-                    <div style="text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; color: var(--secondary-color); font-weight: 700;">${path}</div>
+            contentArea.innerHTML = `
+                <div style="font-family: 'Cormorant Garamond'; text-align: center; margin-bottom: 40px;">
+                    <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: var(--secondary-color); font-weight: 800; margin-bottom: 10px;">Recipe Detail</div>
+                    <h1 style="font-size: 3.5rem; margin: 0; font-style: italic;">${path.split('/').pop().replace('.md', '')}</h1>
                 </div>
                 <div class="markdown-content">${html}</div>
             `;
-
             viewer.style.display = 'block';
             document.body.style.overflow = 'hidden';
-
-            body.querySelectorAll('a').forEach(link => {
-                link.onclick = (e) => {
-                    const href = link.getAttribute('href');
-                    if (href && !href.startsWith('http')) {
-                        e.preventDefault();
-                        openRecipe(href.replace(/^\//, ''));
-                    }
-                };
-            });
-        } catch (err) { console.error(err); }
+        } catch (e) {
+            log(`ERROR: Failed to read ${path}`);
+            alert("This recipe is still simmering. (File Error)");
+        }
     }
 
     function closeRecipe() {
         document.getElementById('recipe-viewer').style.display = 'none';
         document.body.style.overflow = 'auto';
-    }
-
-    async function askChef() {
-        const input = document.getElementById('chat-input');
-        const log = document.getElementById('chat-log');
-        if (!input.value) return;
-
-        log.innerHTML += `<div style="margin-bottom: 10px;"><b>You:</b> ${input.value}</div>`;
-        const q = input.value;
-        input.value = "";
-
-        const res = await gobi.sendMessage(q);
-        log.innerHTML += `<div style="margin-bottom: 15px; color: var(--accent-color);"><b>Chef Mickey:</b> ${res}</div>`;
-        log.scrollTop = log.scrollHeight;
     }
 </script>
 
