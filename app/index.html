@@ -42,6 +42,7 @@
             margin: 0 auto;
             display: flex;
             justify-content: center;
+            align-items: center;
             padding: 15px 20px;
             gap: 20px;
             overflow-x: auto;
@@ -64,6 +65,32 @@
 
         .nav-link:hover { color: var(--accent-color); }
 
+        .lang-toggle {
+            display: flex;
+            gap: 5px;
+            margin-left: 20px;
+            border-left: 1px solid var(--border-color);
+            padding-left: 20px;
+        }
+
+        .lang-btn {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: white;
+            color: #ccc;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: #fff4e6;
+        }
+
         .container {
             max-width: 1100px;
             margin: 0 auto;
@@ -76,7 +103,7 @@
         }
 
         .kitchen-title {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Cormorant+Garamond', serif;
             font-size: 4.5rem;
             color: var(--accent-color);
             margin: 0;
@@ -195,18 +222,23 @@
 
 <nav class="navbar">
     <div class="nav-inner" id="nav-inner">
-        <button class="nav-link" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Top</button>
+        <button class="nav-link" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" id="nav-top">Top</button>
+        <!-- Categories will be injected here -->
+        <div class="lang-toggle">
+            <button class="lang-btn" id="lang-ko" onclick="switchLanguage('ko')">KR</button>
+            <button class="lang-btn" id="lang-en" onclick="switchLanguage('en')">EN</button>
+        </div>
     </div>
 </nav>
 
 <div class="container">
     <header>
         <h1 class="kitchen-title">Mickey's Kitchen</h1>
-        <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.75rem; color: var(--secondary-color); font-weight: 800;">Digital Brain Recipe Book v3.8 (Precision Engine)</p>
+        <p id="subtitle" style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.75rem; color: var(--secondary-color); font-weight: 800;"></p>
     </header>
 
     <div id="kitchen-main">
-        <p style="text-align: center; font-style: italic;" id="loading-msg">Preparing the ingredients...</p>
+        <p style="text-align: center; font-style: italic;" id="loading-msg"></p>
     </div>
 </div>
 
@@ -218,7 +250,41 @@
 <script>
     const categories = ['Stock', 'StockBot', 'Music', 'Health', 'Illustration', 'Thoughts', 'Study'];
     const logs = [];
-    let vaultSlug = 'mickeyfromsd'; // Fallback slug
+    let vaultSlug = 'mickeyfromsd';
+    let currentLang = 'ko';
+
+    const i18n = {
+        ko: {
+            subtitle: "디지털 브레인 레시피 북 v3.9 (다국어 지원)",
+            loading: "재료를 준비하는 중입니다...",
+            top: "상단으로",
+            viewRecipe: "레시피 보기 →",
+            snippetPrefix: "Mickey의 인사이트를 확인하세요: ",
+            recipeDetail: "레시피 상세",
+            source: "출처",
+            cookingComplete: "준비 완료.",
+            chefAway: "셰프가 부재 중입니다. (SDK 오류)",
+            plating: "레시피를 차리는 중: ",
+            errorRead: "레시피를 읽는 중 오류가 발생했습니다. (파일 오류)",
+            errorParse: "오류: 마크다운 파싱 실패",
+            discover: "카테고리: "
+        },
+        en: {
+            subtitle: "Digital Brain Recipe Book v3.9 (Multi-lingual)",
+            loading: "Preparing the ingredients...",
+            top: "Top",
+            viewRecipe: "View Recipe →",
+            snippetPrefix: "Discover Mickey's insights on ",
+            recipeDetail: "Recipe Detail",
+            source: "Source",
+            cookingComplete: "COOKING COMPLETE.",
+            chefAway: "Chef is away. (SDK Error)",
+            plating: "Plating recipe: ",
+            errorRead: "This recipe is still simmering. (File Error)",
+            errorParse: "ERROR: Markdown parsing failed",
+            discover: "Cuisine: "
+        }
+    };
 
     function log(msg) {
         const time = new Date().toLocaleTimeString();
@@ -231,7 +297,6 @@
         console.log(msg);
     }
 
-    // Toggle debug log with 'L' key
     window.addEventListener('keydown', e => {
         if (e.key.toLowerCase() === 'l') {
             const panel = document.getElementById('debug-log');
@@ -239,9 +304,26 @@
         }
     });
 
+    function switchLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('lang-ko').classList.toggle('active', lang === 'ko');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        document.documentElement.lang = lang;
+
+        applyStaticTranslations();
+        if (window.gobi) startCooking();
+    }
+
+    function applyStaticTranslations() {
+        const t = i18n[currentLang];
+        document.getElementById('subtitle').innerText = t.subtitle;
+        document.getElementById('nav-top').innerText = t.top;
+        const loadingMsg = document.getElementById('loading-msg');
+        if (loadingMsg) loadingMsg.innerText = t.loading;
+    }
+
     window.onload = async () => {
-        const params = new URLSearchParams(window.location.search);
-        log("Environment Detect: nav=" + params.get('nav'));
+        switchLanguage('ko'); // Default to KR
 
         const pathParts = window.location.pathname.split('/');
         const urlSlug = pathParts.find(p => p.startsWith('@'))?.replace('@', '');
@@ -261,7 +343,7 @@
             } else if (attempts > 50) {
                 clearInterval(checkSDK);
                 log("FATAL: SDK Timeout.");
-                document.getElementById('loading-msg').innerText = "Chef is away. (SDK Error)";
+                document.getElementById('loading-msg').innerText = i18n[currentLang].chefAway;
             }
         }, 200);
     };
@@ -269,13 +351,20 @@
     async function startCooking() {
         const main = document.getElementById('kitchen-main');
         const nav = document.getElementById('nav-inner');
+        const t = i18n[currentLang];
+
+        // Keep only Top button and Lang toggle
+        const topBtn = document.getElementById('nav-top');
+        const langToggle = nav.querySelector('.lang-toggle');
+        nav.innerHTML = '';
+        nav.appendChild(topBtn);
+
         main.innerHTML = "";
 
         for (const cat of categories) {
             log(`Reading category: "${cat}"`);
             let recipes = [];
             const pathsToTry = [`../${cat}`, `./${cat}`, `/${cat}`, cat, `../../${cat}`, `@${vaultSlug}/${cat}`];
-            let successfulPath = null;
 
             for (const p of pathsToTry) {
                 try {
@@ -283,8 +372,6 @@
                     const list = Array.isArray(res) ? res : (res.data || res.results || []);
                     if (list.length > 0) {
                         recipes = list.filter(f => f.name.endsWith('.md') && f.name !== 'README.md');
-                        successfulPath = p;
-                        log(`  SUCCESS: Found ${recipes.length} in ${p}`);
                         break;
                     }
                 } catch (e) { }
@@ -308,12 +395,12 @@
                     card.className = 'recipe-card';
                     card.onclick = () => openRecipe(cat, r.name);
                     card.innerHTML = `
-                        <div style="font-size: 0.7rem; color: var(--secondary-color); font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">${cat}</div>
+                        <div style="font-size: 0.7rem; color: var(--secondary-color); font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">${t.discover}${cat}</div>
                         <h3>${r.name.replace('.md', '')}</h3>
-                        <div class="snippet">Discover Mickey's insights on ${cat}...</div>
+                        <div class="snippet">${t.snippetPrefix}${cat}...</div>
                         <div class="footer">
                             <span>${(r.size / 1024).toFixed(1)} KB</span>
-                            <span>View Recipe →</span>
+                            <span>${t.viewRecipe}</span>
                         </div>
                     `;
                     grid.appendChild(card);
@@ -322,18 +409,16 @@
                 main.appendChild(sec);
             }
         }
-        log("COOKING COMPLETE.");
+        nav.appendChild(langToggle);
+        log(t.cookingComplete);
     }
 
     async function openRecipe(cat, fileName) {
-        log(`Plating recipe: ${cat}/${fileName}`);
+        const t = i18n[currentLang];
+        log(`${t.plating}${cat}/${fileName}`);
         const pathsToTry = [
-            `../${cat}/${fileName}`,
-            `./${cat}/${fileName}`,
-            `/${cat}/${fileName}`,
-            `${cat}/${fileName}`,
-            `../../${cat}/${fileName}`,
-            `@${vaultSlug}/${cat}/${fileName}`
+            `../${cat}/${fileName}`, `./${cat}/${fileName}`, `/${cat}/${fileName}`,
+            `${cat}/${fileName}`, `../../${cat}/${fileName}`, `@${vaultSlug}/${cat}/${fileName}`
         ];
 
         let rawData = null;
@@ -341,22 +426,19 @@
 
         for (const p of pathsToTry) {
             try {
-                log(`  Trying read path: ${p}`);
                 if (gobi.vault && gobi.vault.readFile) { rawData = await gobi.vault.readFile(p); }
                 else if (gobi.vault && gobi.vault.getFileContent) { rawData = await gobi.vault.getFileContent(p); }
                 else if (gobi.readFile) { rawData = await gobi.readFile(p); }
 
                 if (rawData) {
                     finalPath = p;
-                    log(`    SUCCESS reading from ${p}`);
                     break;
                 }
             } catch (e) { }
         }
 
         if (!rawData) {
-            log(`ERROR: Failed to read ${cat}/${fileName}`);
-            alert("This recipe is still simmering. (File Error)");
+            alert(t.errorRead);
             return;
         }
 
@@ -369,9 +451,9 @@
 
             contentArea.innerHTML = `
                 <div style="font-family: 'Cormorant Garamond'; text-align: center; margin-bottom: 40px;">
-                    <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: var(--secondary-color); font-weight: 800; margin-bottom: 10px;">Recipe Detail</div>
+                    <div style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: var(--secondary-color); font-weight: 800; margin-bottom: 10px;">${t.recipeDetail}</div>
                     <h1 style="font-size: 3.5rem; margin: 0; font-style: italic;">${fileName.replace('.md', '')}</h1>
-                    <div style="font-size: 0.7rem; color: #ccc; margin-top: 10px;">Source: ${finalPath}</div>
+                    <div style="font-size: 0.7rem; color: #ccc; margin-top: 10px;">${t.source}: ${finalPath}</div>
                 </div>
                 <div class="markdown-content">${html}</div>
             `;
@@ -379,7 +461,7 @@
             document.body.style.overflow = 'hidden';
             viewer.scrollTop = 0;
         } catch (e) {
-            log("ERROR: Markdown parsing failed");
+            log(t.errorParse);
         }
     }
 
@@ -390,6 +472,4 @@
 </script>
 </body>
 </html>
-<!-- v3.8 Final Precision Applied: Tue Apr 14 00:05:00 PDT 2026 -->
-
-<!-- Force Sync: Tue Apr 14 20:40:58 PDT 2026 -->
+<!-- v3.9 Multi-lingual Support: Sat Apr 18 2026 -->
