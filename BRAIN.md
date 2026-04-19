@@ -53,4 +53,4 @@ Digital Brain Recipe Style Gobi SDK Homepage.
 - **StockBot Sync**: Scheduled (24h)
 - **GitHub PKM Sync**: Active
 
-_Last updated: 2026-04-12_
+_Last updated: 2026-04-18_
