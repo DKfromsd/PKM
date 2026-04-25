@@ -28,4 +28,5 @@ def get_trends():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Using port 5001 because port 5000 is often used by macOS AirPlay Receiver
+    app.run(debug=True, port=5001)
