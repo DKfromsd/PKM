@@ -4,7 +4,10 @@ Architecture, Infrastructure as Code, and Deep Learning research.
 
 ## 🛠️ Active Projects
 
-- [[Study/agent_test/01_infrastructure_guide.md|Agentic AI Architecture]]
+- **AI-Trend Stock Tracker**:
+    - [[Study/agent_test/02_ai_trending_tracker_architecture.md|Architecture]] | [[Study/agent_test/03_implementation_roadmap.md|Roadmap]]
+    - [[Study/agent_test/app.py|Flask App]] | [[Study/agent_test/data_model.py|Data Model]]
+- [[Study/agent_test/01_infrastructure_guide.md|Agentic AI Architecture (Infra)]]
 - [[Study/manual_project/project architecture.md|Analytics-as-Code (AaC) Portal]]
 - [[Study/taskIaC/IaC 개괄.md|Infrastructure as Code (IaC)]]
 
