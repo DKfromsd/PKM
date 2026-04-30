@@ -289,19 +289,135 @@ sequenceDiagram
 ---
 
 ## 7. Middleware Chain
-*(TBD: Auth, Token Refresh, Logging 미들웨어 설명)*
+```txt
+// go lang: middleware is a func wrapper chain for http.Hanlder
+// each middleware return new hanlder after getting handler
+// (ref: https://pkg.go.dev/net/http#handler)
 
+requestLogger(logger)( // 1. 요청로깅
+    setSessionCookie(sessionStore)( // 2. 세션 쿠키 설정/검증 
+        setSessionEntraProfile(sessionStore,cache)(  // 3. 프로파일주입
+            injectRequestLogger(sessionStore)( // 4. 요청별 컨텍스트 로커
+                ensureUserInDatabase(sessionsStore, store)( // 5. 사용자 존재 확인
+                    restorePersistedTokens()( // 6. Redis 에 토큰복원 영구 sso
+                        autoRefreshTokens()( // 7. 만료 임박 토큰 자동 갱신
+                            setCORSHeader()( // 8. CORS 헤더
+                                router,  // 9. 라우터 (최종핸들러)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+```
 ## 8. Background Worker
-*(TBD: K8s/GitLab 캐시 동기화, 토큰 갱신 워커)*
+worker | cycle | role
+session clear | 5 min | after expired , clean memory
+token update (in-memory) | always | in-memory session OAuth token
+token update (Redis) | always | Redis SSO token update
+K8s cache | 5 min | All env k8s resource status sync 
+GitLab cahce | per user | user Gitlab proect fork list update
+Global cache | regular | service account has Gitlab fork cache warming
+DQ scheduler | cron | DQ work auto run
+Chat processor | event | agent message queue 
 
 ## 9. Auth Flow
-*(TBD: Entra ID SSO 및 JWT 검증 흐름)*
-
+### 9.1. 전체 인증 아키텍쳐
+ - 브라우저  
+ - OAuth2-Proxy (:4180) (Entra ID SSO, JWT, Header injection), X-Forwarded-Email Token. 
+ - Portal (:8000) (Handle Session, Save Token , Update Token)
+### 9.2. 지원 OAuth2 
+ - Azure Entra ID (iframe silent refrehs)
+ - Gitlab REpository / MR / pipeline  (auto token update)
+ - Snowflake Database query token (JWT + OAuth)
+ - Atlassian JIRA confluence (OAuth Token2)
+### 9.3. SSO (perpetual SSO)
+ - 1. 사용자 로그인
+ - 2. Oauth token
+ - 3. 사용자 재접속
+ - 4. 백그라운드 : 만료 전 자동 갱신 
+  
 ## 10. Function List
-*(TBD: 주요 함수 정의 및 역할)*
+- Provisioning (Snowpark, Streamlit, Python/Node/DotNet, AI agent, CronJob, Airflow, ADF)
+- Knowledge Base (semantic model and SQL auto creation)
+- GenUI (Claude AI baed DVA)
+- DQ engine (XML base data quality rule)
+- Agent Chat (K8s secluded chat AI)
+- MCP (Claude Code IDE portal)
+- Workbook (Snowflake SQL workbook edit and run sync with Gitlab)
+- Manager Dashboard (Cache, API key, system monitor)
+- Multi env (DEV/STG/PRD)
+- Grafana dashbaord. (Prometheus metric real time monitor)
 
 ## 11. Skill Reference
-*(TBD: Go 개발 패턴 및 프로젝트 가이드)*
+```txt
+// HTTP server and routing 
+router :=http.NewServeMux()
+router.HandleFunc ("/path", func (w http.ResponseWriter, r *http.Request){
+    // w; ResponseWriter
+    // r; Request
+})
+// server start
+server :=&http.Server{
+    Addr: ":8000",
+    Handler: middlewqaqreChain(router),
+}
+server.ListenAndServe()
+
+// Middle ware pattern
+func myMiddleware (next http.Handler) http.Handler {
+    return http.HanlderFunc (func (w http.ResponseWriter, r * http.Request){
+        // preprocess auth and logging
+        next.ServeHTTP (w,r) // next handler call
+        // after work and response logging
+    })
+}
+
+// Goroutine - async for provisioning and background worker
+go func() {
+    result, err := management.OpCreateNewProject(...)
+    if err !=nil {
+        logger.Error("provisioning failed", "error" ,err)
+        return
+    }
+    // SSE end close
+    sseHub.NotifyProvisioningJobUpdate(sessionID, result)
+}()
+
+// Struct method and interface 
+type Handlers struct {
+    SessionStore *InMemory SessionsStore
+    Snowflake *storage.SnowflakeStorage
+    Cache *Cache
+}
+
+func (h *Hanlders) HTMXHome (w http.ResponseWriter, r *http.Request){
+    session, _ :=h.SessionStore.GetSessionFromRequestCookie(r)
+    h.Template.ExecutteTemplate (w, "landing", data)
+}
+
+// Go Embeded. ref: https://pkg.go.dev/embed 
+// 배포시 별도 파일 서버 없이 단일 바이너리로 정적 서빙가능. 패키지로 빌드 시 파일을 바이너리에 포함
+var templateFS embed.FS
+var staticFS embed.FS
+
+// database/sql pacakge
+db, err :=sql.Open("snowflake", dsn)
+rows, er := db.QueryContext (ctx, "SELECT * FROM table WHERE id=?", id)
+defer rows.Close()
+for rows.Next() {
+    var col1, col2, string
+    rows.Scan(&col1 &col2)
+}
+
+// Server-Sent Event (SSE)
+// 서버 에서 클라이언트로 실시간 단방향 스트리밍 제공. 
+// ref: https://developer.mozilla.org/en-US/docs/Web/API/Server-Sent_events
+// go 에서 http.Flusher interface 사용
+func ()
+```
 
 ## 12. Gitignore
 *(TBD: 제외 파일 목록)*
