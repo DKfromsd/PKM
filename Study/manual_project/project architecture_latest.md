@@ -352,7 +352,10 @@ Chat processor | event | agent message queue
 - Grafana dashbaord. (Prometheus metric real time monitor)
 
 ## 11. Skill Reference
-```txt
+
+### 11.1. Go core pattern
+
+```h
 // HTTP server and routing 
 router :=http.NewServeMux()
 router.HandleFunc ("/path", func (w http.ResponseWriter, r *http.Request){
@@ -418,6 +421,109 @@ for rows.Next() {
 // go 에서 http.Flusher interface 사용
 func ()
 ```
+### 11.2. FrontEnd Pattern
+```h
+
+// HTMX delarable AJAX 
+<!-- HTMX 는 HTML 속성으로 AJAX 요청을 선언적으로 정의함 -->
+<!-- ref: https://htmx.org/docs/ -->
+<!-- 
+   hx-get: GET 요청을 보냄.
+   hx-target: 응답 HTML 을 삽입할 대상 요소 
+   hx-swap: HTML 삽입 방식 (innerHTML , outerHTML 등)
+   hx-trigger: 이벤트 트리거 (click, Load, every 등)
+-->
+
+<button hx-get="/projects/manage/data" 
+        hx-target="#projct-list"
+        hx-swap="innerHTML">
+        프로젝트 새로고침
+</button>
+<!-- form 제출 -->
+<form hx-post="/projects/create"
+      hx-target="#status"
+      hx-swap="innerHTML">
+      <input name="project-name" required>
+      <button type="submit">생성</button>
+</form>
+
+// Go Tempalte syntax 
+<!-- Go html/template 패키지로 서버사이드 렌더링 -->
+<!-- ref: https://pkg.go.dev/html/template -->
+<!-- 
+    {{ .FieldName }} : data field output
+    {{ if .Condition }} : conditional render
+    {{ range .Items }} : repeat loop render
+    {{ template "name" . }} : sub tempalte included 
+-->
+{{ block "index" . }}
+<html>
+    <body>
+        <h1>{{ .Version }}</h>
+        {{ if .GitLabAccessTokenExpired }}
+            <span class ="badge-expired">GitLab 만료됨</span>
+            {{ end }}
+            {{ range .Projects }}
+                <div>{{ .Name }} - {{ .Status }}</div>
+            {{ end }}
+    </body>
+</html>
+{{ end }}
+
+// Fetch API (browser to Server) 
+// Vanilla JS Fetch API is in use to call server API
+// Ref: https://developer.mzilla.org/en-US/docs/Web/API/Fetch_API
+// Axios 나 JQuery 없이 표준 Fetch 만 사용
+// crendentials: 'same-origin' 으로 세션 쿠키를 자동포햐ㅏㅁ.
+fetch('/kb/state?id=' + encodeURIComponent(kbId), {
+    credentials: 'same-origin'
+
+})
+.then(r=>r.json()).tehn(data=> {
+    // KB 상태 업데이트
+    applyKBState(data.data, data.updated_at);
+});
+// POST 요청
+fetch('/genui/viz/sae', {
+    method: 'POST'
+    body: formData
+}).then(r=>r.json()).then(result=>console.log(result));
+```
+
+### 11.3. Infra & DevOps Pattern
+```h
+// Docker file (multistatge biuld)
+# Wolfi 기반 최소 이미지 사용
+# ref: https://docs.docker.com/biuld/building/multi-stage/
+# tini: PID 1 init process 로 좀비 프로세스 방지
+# nonroot: 보안을 위한 비루트 사용자 실행
+FROM wolfi-base:latest
+RUN apk ADD --no-cache tini
+USER nonroot
+ENTRYPOINT ["tini", "--", "/app/app"]
+
+// GitLab CICD 
+# .gitlab-ci.yml: build -> pkg -> test -> deployment ref: https://docs.gitlab.com/ee/ci/
+# stages: 실행 순서 정의 
+# ruleas; 조건부 실행 (브랜치, 이벤트 등)
+# artifacts: 빌드 결과물 전달
+stages:
+ - build # Go binary compile
+ - package # Docker image build
+ - test # container security scan
+ - deploy # Helm in use for K8s delploy (DEV/STG/PRD) 
+
+// Helm values (Jinja2 template)
+# K8s deploy setting
+# ref: https://helm.sh/docs/chart_tempalte_guide/
+# values.yaml.j2 는 CI/CD 에서 Jinja2 로 렌더링 후 Helm 에 전달
+# 환경변수 (K8S_NS, APP_PORT 등) 주입됨.
+replicaCount: 1
+image:
+    repository: registry.gitlab.com/project/team/devops/
+    tag: {{ CI_COMMIT_SHA }}
+```
+
 
 ## 12. Gitignore
 *(TBD: 제외 파일 목록)*
