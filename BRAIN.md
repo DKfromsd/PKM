@@ -60,4 +60,4 @@ Exercise routines, nutrition, and wellness.
 - **StockBot Sync**: Scheduled (24h)
 - **GitHub PKM Sync**: Active
 
-_Last updated: 2026-04-22_
+_Last updated: 2026-05-01_
