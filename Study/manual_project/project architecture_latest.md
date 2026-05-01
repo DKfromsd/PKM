@@ -524,9 +524,46 @@ image:
     tag: {{ CI_COMMIT_SHA }}
 ```
 
-
 ## 12. Gitignore
-*(TBD: 제외 파일 목록)*
+Pattern | Description 
+.env | env var
+htmlcov, htmlcov/* | python coverage HTML report, -pytest 의 --cov-report=html 옵션으로 생성되는 코드 커버리지 보고서 디렉토리  
+.pytest* | Pytest cache file - .pytest_cache/ 등 테스트실행시 생성되는캐시
+__pycache__/ | python byte code cache
+.coverage | python coverage data 
+report.xml | test result report - JUnit XML format
+coverage.xml | coverage XML report - Cobertura format 
+tmp/ | temp for Air (lib reload tool) use build rsult during the auto dev
+oauth2_proxy_alpha.cfg | Oauth2 proxy alpha - env and secret for the proxy setting
+oauth2_proxy_local.cfg | local env Ouath2 proxy for individual client's ID and secret
+oauth2_proxy_local_alpha.cfg | local alpha env proxy
+*.key | SSL and TLS private key
+*.crt | SSL and TLS certificate
+bin/** | build result directory - go compile binary when run make alpine 
+__debug* | debugger binary when VS Code Go div use
+.claude/** | Claude Code CLI generate project files
+tempaltes/** | local dev template copy - dev embed directory external and internal HTML template (internal/filesystem/tempaltes/)
 
 ## 13. Build and Deployment
-*(TBD: CI/CD 파이프라인 및 Wolfi 이미지 빌드)*
+
+### 13.1. Local Dev
+```txt
+# 1. setup file prep
+cp manualprj.ini.example ~/.config/manualprj/manualprj.ini
+
+# 2. reload lib
+air run # .air.toml setup and auto build per change of .go/.html
+
+# 3. portal access : http://localhost:8000
+ 
+# 4. MCP usage: oauth2-proxy is set in the Localhost:4180 
+```
+### 13.2. CICD 
+: push - CICD (build (go compile) - Docker image build package - test for security scan - deploy :Helm though k8s)
+
+### 13.4. Makefile
+```txt
+ # CGO_ENABLED = 0 : pure Go compile
+ # -ldflags '-exldflags "-static" \
+    -X main.version=$(PROJECT_VERSION)' -o bin/app cmd/main.go
+```
