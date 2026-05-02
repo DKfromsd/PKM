@@ -341,14 +341,24 @@
                 log("SDK Ready. Vault: " + gobi.vaultId);
                 await startCooking();
 
-                // Deep Link Support: Check for ?recipe=Category/File.md
-                const urlParams = new URLSearchParams(window.location.search);
-                const recipePath = urlParams.get('recipe');
-                if (recipePath && recipePath.includes('/')) {
-                    const [cat, name] = recipePath.split('/');
-                    log("Deep link detected: " + recipePath);
-                    setTimeout(() => openRecipe(cat, name), 500);
-                }
+                // Deep Link Support: Check for ?recipe= or #recipe=
+                const handleDeepLink = () => {
+                    const searchParams = new URLSearchParams(window.location.search);
+                    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                    const recipePath = searchParams.get('recipe') || hashParams.get('recipe');
+
+                    if (recipePath && recipePath.includes('/')) {
+                        const decodedPath = decodeURIComponent(recipePath);
+                        const [cat, ...nameParts] = decodedPath.split('/');
+                        const name = nameParts.join('/');
+                        log("Deep link detected: " + decodedPath);
+                        // Delay to ensure rendering is stable
+                        setTimeout(() => openRecipe(cat, name), 800);
+                    }
+                };
+
+                handleDeepLink();
+                window.addEventListener('hashchange', handleDeepLink);
             } else if (attempts > 50) {
                 clearInterval(checkSDK);
                 log("FATAL: SDK Timeout.");

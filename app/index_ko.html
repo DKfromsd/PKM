@@ -69,7 +69,25 @@
             if (window.gobi) {
                 clearInterval(checkSDK);
                 if (!gobi.vaultId) gobi.vaultId = vaultSlug;
-                startCooking();
+                await startCooking();
+
+                // Deep Link Support: Check for ?recipe= or #recipe=
+                const handleDeepLink = () => {
+                    const searchParams = new URLSearchParams(window.location.search);
+                    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                    const recipePath = searchParams.get('recipe') || hashParams.get('recipe');
+
+                    if (recipePath && recipePath.includes('/')) {
+                        const decodedPath = decodeURIComponent(recipePath);
+                        const [cat, ...nameParts] = decodedPath.split('/');
+                        const name = nameParts.join('/');
+                        // Delay to ensure rendering is stable
+                        setTimeout(() => openRecipe(cat, name), 800);
+                    }
+                };
+
+                handleDeepLink();
+                window.addEventListener('hashchange', handleDeepLink);
             } else if (attempts > 50) {
                 clearInterval(checkSDK);
                 document.getElementById('kitchen-main').innerHTML = "<p>셰프가 부재 중입니다. (SDK 오류)</p>";

@@ -3,6 +3,7 @@
 Recent reflections and personal notes.
 
 ### 📝 Latest Notes
+- ![[Thoughts/다국어 token 이 영어의 두배?.md]]
 - ![[Thoughts/Micron_AI_Leadership_Dialogue.md]]
 - ![[Thoughts/Gobi_Homepage_101.md]]
 - ![[Thoughts/Gobi_Homepage_101_KR.md]]

@@ -1,3 +1,9 @@
+---
+title: "다국어 토큰(Token)이 영어의 두배? (LLM Tokenization)"
+tags: ["LLM", "NLP", "Tokenization", "BPE", "Multilingual"]
+description: "왜 다국어 토큰은 영어보다 많은가? 그리고 SVD/LSI와의 관계."
+---
+
 ### 1. 다국어 토큰(Token)이 영어보다 2배 이상 많은 이유
 
 영어 구조가 SVD에 최적화되어서라기보다 "학습 데이터의 양"과 **"토큰화 알고리즘(BPE 등)의 경제성"** 때문
@@ -40,8 +46,6 @@ $$ \text{Raw Text} \rightarrow \textbf{Tokenization} \rightarrow \text{Stemming/
 
 현재 투자나 분석 프로젝트를 진행 중이시라면, 다국어 처리 시에는 영어보다 Context Window(문맥 창)를 2배 더 빨리 소모한다는 점(토큰 수가 많으므로)을 비용 계산 시 반드시 고려하셔야 합니다!
 
----
-Here is the explanation in English, organized by sections for clarity.
 
 ---
 
