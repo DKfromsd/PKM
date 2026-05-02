@@ -340,6 +340,15 @@
                 if (!gobi.vaultId) { gobi.vaultId = vaultSlug; }
                 log("SDK Ready. Vault: " + gobi.vaultId);
                 await startCooking();
+
+                // Deep Link Support: Check for ?recipe=Category/File.md
+                const urlParams = new URLSearchParams(window.location.search);
+                const recipePath = urlParams.get('recipe');
+                if (recipePath && recipePath.includes('/')) {
+                    const [cat, name] = recipePath.split('/');
+                    log("Deep link detected: " + recipePath);
+                    setTimeout(() => openRecipe(cat, name), 500);
+                }
             } else if (attempts > 50) {
                 clearInterval(checkSDK);
                 log("FATAL: SDK Timeout.");
